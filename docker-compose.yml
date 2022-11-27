@@ -1,0 +1,73 @@
+version: "3.7"
+
+services:
+  gofiber:
+    container_name: gofiber_container
+    build:
+      context: ./backend/app
+    ports:
+      - "3000:${FIBER_PORT:-3000}"
+    volumes:
+      # docker-compose run --service-ports gofiber bash
+      - ./backend/app:/usr/src/app
+    # command: go run cmd/main.go -b 0.0.0.0
+    command: air ./cmd/main.go -b 0.0.0.0
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+
+  # nodejs + vue3
+  # frontend:
+  #   container_name: frontend-container
+  #   build:
+  #     context: ./frontend
+  #   volumes:
+  #     # docker-compose run --service-ports frontend bash
+  #     - ./frontend:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   ports:
+  #     - "5173:5173"
+
+  postgres:
+    container_name: postgres_container
+    image: postgres:10-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-root}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
+      POSTGRES_DB: ${POSTGRES_DB:-FPV-DB}
+      PGDATA: /db/postgres
+    volumes:
+       - ./db/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: always
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - ./pgadmin:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - postgres
+    restart: always
+    depends_on:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  gofiber:
+  # frontend:
+  postgres:
+  pgadmin:
