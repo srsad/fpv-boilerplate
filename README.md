@@ -1,5 +1,8 @@
 # Описание
-** fiber (go) + postgres + vue **
+Сборка базируется на:
+  - [fiber](https://docs.gofiber.io/) + [air](https://github.com/cosmtrek/air) (go 1.19.3)
+  - [postgres 15.1](https://www.postgresql.org/)
+  - [vue 3](https://vuejs.org/) + [tailwind](https://tailwindcss.com/) + [postCSS](https://postcss.org/)
 
 ### Начало работы
   1. `git clone https://github.com/srsad/discount-service.git`
